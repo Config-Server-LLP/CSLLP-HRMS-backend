@@ -53,20 +53,6 @@ public class AttendanceController {
         return ResponseEntity.ok(importedData.isEmpty() ? Collections.emptyList() : importedData);
     }
 
-    /*// ✅ Get all attendance for a specific date - return Entity
-    @GetMapping("/daily")
-    public ResponseEntity<List<EmployeeAttendance>> getDailyAttendance(@RequestParam String date) {
-        LocalDate localDate;
-        try {
-            localDate = LocalDate.parse(date);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
-        }
-
-        List<EmployeeAttendance> result = attendanceService.getDailyAttendance(localDate);
-        return ResponseEntity.ok(result.isEmpty() ? Collections.emptyList() : result);
-    }*/
-
    // ✅ Download Attendance Report API
    @GetMapping("/download")
    public ResponseEntity<ByteArrayResource> downloadAttendanceReport(@RequestParam String date) {
@@ -88,4 +74,3 @@ public class AttendanceController {
                .body(resource);
    }
 }
-

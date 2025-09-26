@@ -9,8 +9,6 @@ import com.configserver.hrm.attendanceService.exception.InvalidAttendanceDataExc
 import com.configserver.hrm.attendanceService.external.EtimeOfficeService;
 import com.configserver.hrm.attendanceService.repository.EmployeeAttendanceRepository;
 import com.configserver.hrm.attendanceService.service.AttendanceService;
-import com.configserver.hrm.attendanceService.service.EmailService;
-import com.configserver.hrm.attendanceService.util.ExcelReportGenerator;
 import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -131,38 +127,6 @@ public class AttendanceServiceImpl implements AttendanceService {
             throw new ExcelDownloadException("Failed to download report for date: " + date, e);
         }
     }
-//
-//  private EmployeeAttendance mapDtoToEntity(AttendanceRequestDTO dto) {
-//        EmployeeAttendance entity = new EmployeeAttendance();
-//        // existing mapping
-//        entity.setEmployeeId(dto.getEmployeeId());
-//        entity.setEmployeeName(dto.getEmployeeName());
-//        entity.setShift(dto.getShift());
-//        entity.setDate(dto.getDate());
-//        entity.setInTime(parseTime(dto.getInTime()));
-//        entity.setOutTime(parseTime(dto.getOutTime()));
-//        entity.setLateIn(dto.getLateIn());
-//        entity.setErlOut(dto.getErlOut());
-//        entity.setOverTime(dto.getOverTime());
-//        entity.setRemark(dto.getRemark());
-//
-//        boolean isPresent = (entity.getInTime() != null && entity.getOutTime() != null);
-//        entity.setStatus(isPresent ? AttendanceStatus.PRESENT : AttendanceStatus.ABSENT);
-//        entity.setWorkHours(isPresent
-//                ? java.time.Duration.between(entity.getInTime(), entity.getOutTime()).toMinutes() / 60.0
-//                : 0.0);
-//
-//        // 🔹 Schedule email reminder if OutTime missing
-//        if (entity.getInTime() != null && entity.getOutTime() == null) {
-//            long delay = 8; // hours
-//            scheduler.schedule(() -> {
-//                String email = employeeEmailConfig.getEmailByEmployeeId(entity.getEmployeeId());
-//                emailService.sendPunchOutReminder(email, entity.getEmployeeName());
-//            }, delay, TimeUnit.HOURS);
-//        }
-//
-//        return entity;
-//    }
     private EmployeeAttendance mapDtoToEntity(AttendanceRequestDTO dto) {
         EmployeeAttendance entity = new EmployeeAttendance();
 
@@ -198,8 +162,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         return entity;
     }
-
-
     // 🔹 Excel parsing to DTO
     private List<AttendanceRequestDTO> parseExcelToDTO(byte[] excelData, LocalDate date) throws Exception {
         List<AttendanceRequestDTO> attendanceList = new ArrayList<>();
@@ -237,7 +199,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
         return attendanceList;
     }
-
     // 🔹 Helpers
     private String normalizeCellValue(String val) {
         if (val == null) return null;
