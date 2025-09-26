@@ -1,4 +1,4 @@
-package com.configserver.hrm.employeeService.service;
+package com.configserver.hrm.employeeService.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -11,11 +11,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendPasswordEmail(String toEmail, String password) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
+        message.setTo(toEmail);
+        message.setSubject("Your Account Password");
+        message.setText("Your password is: " + password);
         mailSender.send(message);
     }
 }

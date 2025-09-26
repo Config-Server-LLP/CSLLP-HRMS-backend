@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -73,4 +74,10 @@ public class AttendanceController {
                .headers(headers)
                .body(resource);
    }
+    @GetMapping("/employees-info")
+    public ResponseEntity<List<Map<String, Object>>> getEmployeesInfo() {
+        List<Map<String, Object>> employees = attendanceService.getEmployeesFromAttendance();
+        return ResponseEntity.ok(employees);
+    }
+
 }

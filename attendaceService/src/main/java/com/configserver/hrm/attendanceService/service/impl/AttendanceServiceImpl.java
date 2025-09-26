@@ -20,7 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,12 +50,12 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void importAttendance(List<AttendanceRequestDTO> attendanceList) {
         attendanceList.stream()
                 .filter(dto -> !repository.existsByEmployeeIdAndDate(dto.getEmployeeId(), dto.getDate()))
-                .map(this::mapDtoToEntity)
-                .forEach(repository::save);
+                .map(this::mapDtoToEntity)//convert dto to entity
+                .forEach(repository::save);// method reference:: // loop over dtos and internally save itin db
     }
 
     @Override
-    @Transactional
+    @Transactional // to revert the operation in intial state
     public List<EmployeeAttendance> importDailyAttendanceFromEtimeOffice() {
         try {
             String reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -61,7 +63,6 @@ public class AttendanceServiceImpl implements AttendanceService {
             if (excelData == null || excelData.length == 0) {
                 throw new RuntimeException("Downloaded report empty");
             }
-
             repository.deleteByDate(LocalDate.now());
 
             List<AttendanceRequestDTO> attendanceList = parseExcelToDTO(excelData, LocalDate.now());
@@ -240,5 +241,21 @@ public class AttendanceServiceImpl implements AttendanceService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<Map<String, Object>> getEmployeesFromAttendance() {
+        List<EmployeeAttendance> attendanceList = importDailyAttendanceFromEtimeOffice();
+        List<Map<String, Object>> employees = new ArrayList<>();
+
+        for(EmployeeAttendance attendance : attendanceList) {
+            Map<String, Object> empData = new HashMap<>();
+            empData.put("employeeId", attendance.getEmployeeId());
+            empData.put("name", attendance.getEmployeeName());
+            // fetch email from your config
+            String email = employeeEmailConfig.getEmailByEmployeeId(attendance.getEmployeeId());
+            empData.put("email", email);
+            employees.add(empData);
+        }
+        return employees;
     }
 }

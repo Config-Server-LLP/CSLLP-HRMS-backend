@@ -5,12 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,5 +22,6 @@ public class User {
 
     private String password;
 
-    private String role; // ADMIN, HR, MANAGER, EMPLOYEE
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

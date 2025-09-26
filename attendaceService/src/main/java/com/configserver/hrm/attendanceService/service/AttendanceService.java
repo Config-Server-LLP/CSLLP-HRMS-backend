@@ -5,6 +5,7 @@ import com.configserver.hrm.attendanceService.entity.EmployeeAttendance;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface AttendanceService {
 
@@ -24,4 +25,6 @@ public interface AttendanceService {
 
     // ✅ Download attendance report (Excel bytes)
     byte[] downloadAttendanceReport(LocalDate date);
+
+    List<Map<String, Object>> getEmployeesFromAttendance();
 }
